@@ -1,3 +1,5 @@
+import 'package:firebase_example/src/screens/account_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,6 +12,28 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        elevation: 0.0,
+        title: const Text("Home"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => const AccountScreen(),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.account_circle,
+              size: 30,
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

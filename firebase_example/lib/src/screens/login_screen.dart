@@ -20,6 +20,14 @@ class _LoginScreenState extends State<LoginScreen> {
   String errorMgs = "";
   User? userSuccess;
 
+  @override
+  void initState() {
+    super.initState();
+
+    errorMgs = "";
+    userSuccess = null;
+  }
+
   void loginByEmail(String email, String pass) async {
     if (email.isNotEmpty && pass.isNotEmpty) {
       try {
