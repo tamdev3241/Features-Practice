@@ -68,6 +68,22 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void loginByFacebook() async {
+    try {
+      var user = await authService.signInWithFacebook();
+      if (user != null && context.mounted) {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        errorMgs = e.toString();
+      });
+    }
+  }
+
   void signUpByEmail(String email, String pass) async {
     if (email.isNotEmpty && pass.isNotEmpty) {
       try {
@@ -170,6 +186,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: loginByGoogle,
                   child: SvgPicture.asset(
                     AssetsManager.google,
+                    height: 30,
+                  ),
+                ),
+                InkWell(
+                  onTap: loginByFacebook,
+                  child: SvgPicture.asset(
+                    AssetsManager.facebook,
                     height: 30,
                   ),
                 )

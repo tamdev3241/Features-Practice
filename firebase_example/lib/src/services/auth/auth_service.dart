@@ -4,4 +4,5 @@ abstract class AuthService {
   Future<User?> signUpWithEmail(String email, String password);
   Future<User?> signInWithEmail(String email, String password);
   Future<User?> signInWithGoogle();
+  Future<User?> signInWithFacebook();
 }
