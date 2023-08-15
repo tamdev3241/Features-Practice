@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_example/src/constant/assets_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../services/auth/auth_service_impl.dart';
 import '../widgets/user_infor_view.dart';
@@ -47,6 +49,22 @@ class _LoginScreenState extends State<LoginScreen> {
           errorMgs = e.toString();
         });
       }
+    }
+  }
+
+  void loginByGoogle() async {
+    try {
+      var user = await authService.signInWithGoogle();
+      if (user != null && context.mounted) {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        errorMgs = e.toString();
+      });
     }
   }
 
@@ -135,6 +153,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 return const SizedBox.shrink();
               },
             ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                "Login with social app",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                InkWell(
+                  onTap: loginByGoogle,
+                  child: SvgPicture.asset(
+                    AssetsManager.google,
+                    height: 30,
+                  ),
+                )
+              ],
+            )
           ],
         ),
       ),

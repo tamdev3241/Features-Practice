@@ -6,6 +6,7 @@ import 'package:firebase_example/src/screens/account_screen.dart';
 import 'package:firebase_example/src/screens/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'firebase_options.dart';
 import 'src/screens/login_screen.dart';
