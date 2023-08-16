@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_example/src/constant/assets_manager.dart';
+import 'package:firebase_example/src/constant/sign_in_social_type_enum.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -54,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void loginByGoogle() async {
     try {
-      var user = await authService.signInWithGoogle();
+      var user = await authService.signInWithSocial(SignInSocialType.google);
       if (user != null && context.mounted) {
         Navigator.push(
           context,
@@ -70,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void loginByFacebook() async {
     try {
-      var user = await authService.signInWithFacebook();
+      var user = await authService.signInWithSocial(SignInSocialType.facebook);
       if (user != null && context.mounted) {
         Navigator.push(
           context,
@@ -197,7 +198,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 )
               ],
-            )
+            ),
+            const Divider(),
+            TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, "/otp");
+                },
+                child: const Text(
+                  "Sign in with Phone number",
+                  style: TextStyle(
+                    color: Colors.blueAccent,
+                    decoration: TextDecoration.underline,
+                  ),
+                ))
           ],
         ),
       ),

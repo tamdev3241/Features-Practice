@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_example/src/screens/account_screen.dart';
 import 'package:firebase_example/src/screens/home_screen.dart';
+import 'package:firebase_example/src/screens/otp_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -70,6 +71,8 @@ class _MyAppState extends State<MyApp> {
                 return const LoginScreen();
               case "/account":
                 return const AccountScreen();
+              case "/otp":
+                return const OTPScreen();
               default:
                 return const LoginScreen();
             }
