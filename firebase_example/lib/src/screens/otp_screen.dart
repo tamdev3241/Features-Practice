@@ -54,10 +54,18 @@ class _OTPScreenState extends State<OTPScreen> {
         setState(() {});
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
-      verificationCompleted: (phoneAuthCredential) async {
-        await _authInstance
-            .signInWithCredential(phoneAuthCredential)
-            .then((value) {
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        if (credential.smsCode != null && credential.smsCode!.isNotEmpty) {
+          setState(() {
+            c1.text = credential.smsCode![0];
+            c2.text = credential.smsCode![1];
+            c3.text = credential.smsCode![2];
+            c4.text = credential.smsCode![3];
+            c5.text = credential.smsCode![4];
+            c6.text = credential.smsCode![5];
+          });
+        }
+        await _authInstance.signInWithCredential(credential).then((value) {
           if (value.user != null) {
             log("Done !!");
           } else {
@@ -80,7 +88,6 @@ class _OTPScreenState extends State<OTPScreen> {
         verificationId: verifyId,
         smsCode: code,
       );
-
       await _authInstance.signInWithCredential(credential).then((value) {
         if (value.user != null) {
           Navigator.pushNamedAndRemoveUntil(
@@ -100,17 +107,20 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Column(
+            child: ListView(
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 50),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 50),
                   child: Text(
-                    "Enter the code sent to the number \n+84 352 559 972",
-                    style: TextStyle(
+                    phoneController.text.isEmpty
+                        ? "Enter your phone"
+                        : "Enter the code sent to the number \n+84 ${phoneController.text}",
+                    style: const TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
                     ),

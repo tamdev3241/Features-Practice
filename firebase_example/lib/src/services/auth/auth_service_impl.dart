@@ -113,33 +113,17 @@ class AuthServiceImpl extends AuthService {
   }
 
   @override
-  Future<User?> signInWithPhoneNumber() async {
-    User? user;
+  Future<bool> resetPassword(String email) async {
     try {
-      await _authInstance.verifyPhoneNumber(
-        phoneNumber: '',
-        verificationCompleted: (phoneAuthCredential) async {
-          //  This handler will only be called on Android devices
-          //  which support automatic SMS code resolution.
-          var credential =
-              await _authInstance.signInWithCredential(phoneAuthCredential);
-
-          if (credential.user != null) {
-            user = credential.user!;
-          } else {
-            throw Exception("Occured an error: User has not present !");
-          }
-        },
-        verificationFailed: (FirebaseException e) {
-          throw Exception(e.message);
-        },
-        codeSent: (verificationId, forceResendingToken) {},
-        codeAutoRetrievalTimeout: (verificationId) {},
-      );
-
-      return user;
+      bool isSent = false;
+      await _authInstance
+          .sendPasswordResetEmail(email: email.trim())
+          .whenComplete(() => isSent = true);
+      return isSent;
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e.message);
     } catch (e) {
-      throw Exception("Occured an error: ${e.toString()}");
+      throw Exception(e.toString());
     }
   }
 }

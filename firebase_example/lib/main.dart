@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_example/src/screens/account_screen.dart';
+import 'package:firebase_example/src/screens/forgot_pass_screen.dart';
 import 'package:firebase_example/src/screens/home_screen.dart';
 import 'package:firebase_example/src/screens/otp_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -58,9 +59,18 @@ class _MyAppState extends State<MyApp> {
       title: 'Firebase pratice',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      initialRoute: isLogged ? "/home" : "/login",
+          primarySwatch: Colors.blue,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            shadowColor: Colors.transparent,
+            iconTheme: IconThemeData(
+              size: 30,
+              color: Colors.black,
+            ),
+          )),
+      // initialRoute: isLogged ? "/home" : "/login",
+      initialRoute: "/forgotPass",
       onGenerateRoute: (settings) {
         return CupertinoPageRoute(
           builder: (context) {
@@ -73,6 +83,8 @@ class _MyAppState extends State<MyApp> {
                 return const AccountScreen();
               case "/otp":
                 return const OTPScreen();
+              case "/forgotPass":
+                return const ForgotPassScreen();
               default:
                 return const LoginScreen();
             }

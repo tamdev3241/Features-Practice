@@ -40,9 +40,10 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         if (user != null && context.mounted) {
-          Navigator.push(
+          Navigator.pushNamedAndRemoveUntil(
             context,
-            CupertinoPageRoute(builder: (context) => const HomeScreen()),
+            "/home",
+            (route) => false,
           );
         }
       } catch (e) {
@@ -109,109 +110,118 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         padding: const EdgeInsets.all(20),
         alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                hintText: "Email",
-              ),
-            ),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(
-                hintText: "Password",
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  errorMgs,
-                  style: const TextStyle(
-                    fontSize: 15.0,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                loginByEmail(emailController.text, passwordController.text);
-              },
-              child: const Text("Login"),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                signUpByEmail(emailController.text, passwordController.text);
-              },
-              child: const Text("Sign up"),
-            ),
-            const SizedBox(height: 20),
-            StreamBuilder<User?>(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (snapshot.hasData) {
-                  return UserData(user: snapshot.data!);
-                }
-
-                return const SizedBox.shrink();
-              },
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Text(
-                "Login with social app",
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "Login",
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
                 ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                InkWell(
-                  onTap: loginByGoogle,
-                  child: SvgPicture.asset(
-                    AssetsManager.google,
-                    height: 30,
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  hintText: "Email",
+                ),
+              ),
+              TextField(
+                controller: passwordController,
+                decoration: const InputDecoration(
+                  hintText: "Password",
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    errorMgs,
+                    style: const TextStyle(
+                      fontSize: 15.0,
+                      color: Colors.red,
+                    ),
                   ),
                 ),
-                InkWell(
-                  onTap: loginByFacebook,
-                  child: SvgPicture.asset(
-                    AssetsManager.facebook,
-                    height: 30,
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/forgotPass");
+                  },
+                  child: const Text(
+                    "Forgot password",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
-                )
-              ],
-            ),
-            const Divider(),
-            TextButton(
+                ),
+              ),
+              ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, "/otp");
+                  loginByEmail(emailController.text, passwordController.text);
                 },
-                child: const Text(
-                  "Sign in with Phone number",
+                child: const Text("Login"),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  signUpByEmail(emailController.text, passwordController.text);
+                },
+                child: const Text("Sign up"),
+              ),
+              const SizedBox(height: 20),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Login with social app",
                   style: TextStyle(
-                    color: Colors.blueAccent,
-                    decoration: TextDecoration.underline,
+                    fontSize: 16,
+                    color: Colors.grey,
                   ),
-                ))
-          ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  InkWell(
+                    onTap: loginByGoogle,
+                    child: SvgPicture.asset(
+                      AssetsManager.google,
+                      height: 30,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: loginByFacebook,
+                    child: SvgPicture.asset(
+                      AssetsManager.facebook,
+                      height: 30,
+                    ),
+                  )
+                ],
+              ),
+              const Divider(),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/otp");
+                  },
+                  child: const Text(
+                    "Sign in with Phone number",
+                    style: TextStyle(
+                      color: Colors.blueAccent,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ))
+            ],
+          ),
         ),
       ),
     );

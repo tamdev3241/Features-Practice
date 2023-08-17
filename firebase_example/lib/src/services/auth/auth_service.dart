@@ -6,5 +6,5 @@ abstract class AuthService {
   Future<User?> signUpWithEmail(String email, String password);
   Future<User?> signInWithEmail(String email, String password);
   Future<User?> signInWithSocial(SignInSocialType typeProvider);
-  Future<User?> signInWithPhoneNumber();
+  Future<bool> resetPassword(String email);
 }
