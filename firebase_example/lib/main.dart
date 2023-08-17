@@ -2,16 +2,15 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_example/src/screens/account_screen.dart';
-import 'package:firebase_example/src/screens/forgot_pass_screen.dart';
-import 'package:firebase_example/src/screens/home_screen.dart';
-import 'package:firebase_example/src/screens/otp_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import 'firebase_options.dart';
+import 'src/screens/account_screen.dart';
+import 'src/screens/forgot_pass_screen.dart';
+import 'src/screens/home_screen.dart';
 import 'src/screens/login_screen.dart';
+import 'src/screens/otp_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,8 +68,7 @@ class _MyAppState extends State<MyApp> {
               color: Colors.black,
             ),
           )),
-      // initialRoute: isLogged ? "/home" : "/login",
-      initialRoute: "/forgotPass",
+      initialRoute: isLogged ? "/home" : "/login",
       onGenerateRoute: (settings) {
         return CupertinoPageRoute(
           builder: (context) {
