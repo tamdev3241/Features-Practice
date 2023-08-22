@@ -17,7 +17,15 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0.0,
-        title: const Text("Home"),
+        centerTitle: true,
+        title: const Text(
+          "Home",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 22.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -34,6 +42,21 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           )
         ],
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, "/chat");
+              },
+              child: const Text(
+                "Go to Chat",
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

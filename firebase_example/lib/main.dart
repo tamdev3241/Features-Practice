@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,17 +17,20 @@ import 'src/screens/home_screen.dart';
 import 'src/screens/login_screen.dart';
 import 'src/screens/otp_screen.dart';
 import 'src/services/firebase_message.dart';
+import 'src/utils/utils.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 // Initialize the [FlutterLocalNotificationsPlugin] package.
-late FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 /// Create a [AndroidNotificationChannel] for heads up notifications
 late AndroidNotificationChannel _channel;
 
-bool _isFlutterLocalNotificationsInitalized = false;
+bool isFlutterLocalNotificationsInitalized = false;
 
-Future<void> setupFlutterNotification() async {
-  if (_isFlutterLocalNotificationsInitalized) {
+Future setupFlutterNotification() async {
+  if (isFlutterLocalNotificationsInitalized) {
     return;
   }
 
@@ -37,17 +41,13 @@ Future<void> setupFlutterNotification() async {
     importance: Importance.high,
   );
 
-  _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  initLocalNotification();
+  initPushNotification();
+  isFlutterLocalNotificationsInitalized = true;
+}
 
-  /// Create an Android Notification Channel.
-  ///
-  /// We use this channel in the `AndroidManifest.xml` file to override the
-  /// default FCM channel to enable heads up notifications.
-  await _flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(_channel);
-
+Future initPushNotification() async {
   /// Update the iOS foreground notification presentation options to allow
   /// heads up notifications.
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -55,28 +55,69 @@ Future<void> setupFlutterNotification() async {
     badge: true,
     sound: true,
   );
-
-  _isFlutterLocalNotificationsInitalized = true;
 }
 
-void showFlutterNotification(RemoteMessage remoteMgs) {
+Future initLocalNotification() async {
+  const iOS = DarwinInitializationSettings();
+  const android = AndroidInitializationSettings('@drawable/message');
+  const settings = InitializationSettings(android: android, iOS: iOS);
+
+  await flutterLocalNotificationsPlugin.initialize(
+    settings,
+    onDidReceiveNotificationResponse: (details) {
+      final message = RemoteMessage.fromMap(jsonDecode(details.payload!));
+      handleMessageOpenApp(message);
+    },
+  );
+
+  /// Create an Android Notification Channel.
+  ///
+  /// We use this channel in the `AndroidManifest.xml` file to override the
+  /// default FCM channel to enable heads up notifications.
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(_channel);
+}
+
+Future<NotificationDetails> setNotificationDetail() async {
+  final largeIcon = await Utils.downLoadFile(
+    "https://images.pexels.com/photos/2664417/pexels-photo-2664417.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "largeIcon",
+  );
+  final bigImage = await Utils.downLoadFile(
+    "https://images.pexels.com/photos/4641833/pexels-photo-4641833.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    "bigImage",
+  );
+
+  final styleInfor = BigPictureStyleInformation(
+    FilePathAndroidBitmap(bigImage),
+    largeIcon: FilePathAndroidBitmap(largeIcon),
+  );
+
+  return NotificationDetails(
+    android: AndroidNotificationDetails(
+      _channel.id,
+      _channel.name,
+      channelDescription: _channel.description,
+      styleInformation: styleInfor,
+      icon: '@drawable/message',
+    ),
+    iOS: const DarwinNotificationDetails(),
+  );
+}
+
+Future showFlutterNotification(RemoteMessage remoteMgs) async {
   final RemoteNotification? remoteNotification = remoteMgs.notification;
   AndroidNotification? android = remoteMgs.notification?.android;
 
   if (remoteNotification != null && android != null && !kIsWeb) {
-    _flutterLocalNotificationsPlugin.show(
-      remoteNotification.hashCode,
-      remoteNotification.title,
-      remoteNotification.body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          _channel.id,
-          _channel.name,
-          channelDescription: _channel.description,
-          icon: 'launch_background',
-        ),
-      ),
-    );
+    flutterLocalNotificationsPlugin.show(
+        remoteNotification.hashCode,
+        remoteNotification.title,
+        remoteNotification.body,
+        await setNotificationDetail(),
+        payload: jsonEncode(remoteMgs.toMap()));
   }
 }
 
@@ -88,19 +129,24 @@ Future<void> handleBackgroundMessage(RemoteMessage remoteMsg) async {
 void handleForegroundMsg(RemoteMessage remoteMsg) async {
   // Setup push notification
   await setupFlutterNotification();
-  showFlutterNotification(remoteMsg);
+  await showFlutterNotification(remoteMsg);
 
   log('Handling a foreground message ${remoteMsg.messageId}');
 }
 
-void handleMessageOpenApp(RemoteMessage remoteMsg) async {
+void handleMessageOpenApp(
+  RemoteMessage remoteMsg, {
+  bool isForeground = false,
+}) async {
   // Setup push notification
   await setupFlutterNotification();
+  navigatorKey.currentState?.pushNamed("/chat", arguments: remoteMsg);
 
-  navigatorKey.currentState?.pushNamed('/chat', arguments: remoteMsg);
+  log(isForeground
+      ? 'Handling current notification'
+      : 'Handling a notification to open app.');
 }
 
-final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -126,7 +172,16 @@ void main() async {
   // Handle a notification on foreground(user in app)
   FirebaseMessaging.onMessage.listen(handleForegroundMsg);
 
-  FirebaseMessaging.onMessageOpenedApp.listen(handleMessageOpenApp);
+  // Handle a notification when once user open start app
+  FirebaseMessaging.instance.getInitialMessage().then((value) {
+    if (value != null) {
+      handleMessageOpenApp(value);
+    }
+  });
+
+  FirebaseMessaging.onMessageOpenedApp.listen((value) {
+    handleMessageOpenApp(value, isForeground: true);
+  });
 
   /// ======== Setup firebase debug mode  =========
   // if (kDebugMode) {
@@ -147,7 +202,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isLogged = FirebaseAuth.instance.currentUser != null;
-
     return MaterialApp(
       title: 'Firebase pratice',
       debugShowCheckedModeBanner: false,
@@ -172,7 +226,8 @@ class MyApp extends StatelessWidget {
               case "/home":
                 return const HomeScreen();
               case "/chat":
-                return const ChatScreen();
+                return ChatScreen(
+                    message: (settings.arguments) as RemoteMessage);
               case "/login":
                 return const LoginScreen();
               case "/account":
