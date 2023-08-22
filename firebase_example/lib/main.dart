@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_example/src/screens/scrashlytics_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -183,15 +185,26 @@ void main() async {
     handleMessageOpenApp(value, isForeground: true);
   });
 
-  /// ======== Setup firebase debug mode  =========
-  // if (kDebugMode) {
-  //   try {
-  //     FirebaseFirestore.instance.useFirestoreEmulator("localhost", 9090);
-  //     await FirebaseAuth.instance.useAuthEmulator("localhost", 9090);
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
+  if (kDebugMode) {
+    //======== Crashlytics ========
+    // Force disable Crashlytics collection while doing every day development.
+    // Temporarily toggle this to true if you want to test crash reporting in your app.
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
+    // Pass all uncaught "fatal" errors from the framework to Crashlytics
+    FlutterError.onError = (error) {
+      FirebaseCrashlytics.instance.recordFlutterError(error);
+      log("An error uncaught fatal error sent to crashlytic");
+    };
+
+    // Pass all uncaught asynchronous errors
+    // that aren't handled by the Flutter framework to Crashlytics.
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      log("An error was sent to crashlytic");
+      return true;
+    };
+  }
 
   runApp(const MyApp());
 }
@@ -228,6 +241,8 @@ class MyApp extends StatelessWidget {
               case "/chat":
                 return ChatScreen(
                     message: (settings.arguments) as RemoteMessage);
+              case "/crash":
+                return const CrashlyticScreen();
               case "/login":
                 return const LoginScreen();
               case "/account":

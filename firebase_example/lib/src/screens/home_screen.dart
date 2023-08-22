@@ -52,7 +52,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pushNamed(context, "/chat");
               },
               child: const Text(
-                "Go to Chat",
+                "Go to chat screen",
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, "/crash");
+              },
+              child: const Text(
+                "Go to crash screen",
               ),
             ),
           ],
