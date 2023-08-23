@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_example/src/constant/route_name.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,11 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         if (user != null && context.mounted) {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            "/home",
-            (route) => false,
-          );
+          _moveToHome();
         }
       } catch (e) {
         setState(() {
@@ -58,11 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var user = await authService.signInAsGuess();
 
       if (user != null && context.mounted) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          "/home",
-          (route) => false,
-        );
+        _moveToHome();
       }
     } catch (e) {
       setState(() {
@@ -85,10 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
           throw Exception("Not found social type: $type");
       }
       if (user != null && context.mounted) {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(builder: (context) => const HomeScreen()),
-        );
+        _moveToHome();
       }
     } catch (e) {
       setState(() {
@@ -116,6 +106,14 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     }
+  }
+
+  void _moveToHome() {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      RouteName.home,
+      (route) => false,
+    );
   }
 
   @override
@@ -165,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.centerLeft,
                 child: TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/forgotPass");
+                    Navigator.pushNamed(context, RouteName.forgotPass);
                   },
                   child: const Text(
                     "Forgot password",
@@ -243,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const Divider(),
               TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/otp");
+                    Navigator.pushNamed(context, RouteName.otp);
                   },
                   child: const Text(
                     "Sign in with Phone number",

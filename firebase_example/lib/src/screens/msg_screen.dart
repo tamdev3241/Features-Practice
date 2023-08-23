@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 
 import '../widgets/data_chat.dart';
 
-class ChatScreen extends StatefulWidget {
+class MsgScreen extends StatefulWidget {
   final RemoteMessage? message;
-  const ChatScreen({
+  const MsgScreen({
     super.key,
     this.message,
   });
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<MsgScreen> createState() => _MsgScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _MsgScreenState extends State<MsgScreen> {
   RemoteMessage? _msg;
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          "Chat",
+          "Message",
           style: TextStyle(
             fontSize: 24.0,
             color: Colors.black,

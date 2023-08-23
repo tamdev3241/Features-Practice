@@ -1,3 +1,4 @@
+import 'package:firebase_example/src/constant/route_name.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -29,12 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) => const AccountScreen(),
-                ),
-              );
+              Navigator.pushNamed(context, RouteName.profile);
             },
             icon: const Icon(
               Icons.account_circle,
@@ -49,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, "/chat");
+                Navigator.pushNamed(context, RouteName.chat);
               },
               child: const Text(
                 "Go to chat screen",
@@ -57,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, "/crash");
+                Navigator.pushNamed(context, RouteName.crash);
               },
               child: const Text(
                 "Go to crash screen",

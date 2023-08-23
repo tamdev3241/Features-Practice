@@ -3,22 +3,14 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_example/src/screens/scrashlytics_screen.dart';
+import 'src/configs/route_controller.dart';
+import 'src/constant/route_name.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'firebase_options.dart';
-import 'src/screens/account_screen.dart';
-import 'src/screens/chat_screen.dart';
-import 'src/screens/forgot_pass_screen.dart';
-import 'src/screens/home_screen.dart';
-import 'src/screens/login_screen.dart';
-import 'src/screens/otp_screen.dart';
-import 'src/services/firebase_message.dart';
 import 'src/utils/utils.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -165,9 +157,6 @@ void main() async {
 
   /// ======== Setup firebase messaging =========
 
-  // Setup firebase messaging
-  await FirebaseMessageService().initNotifications();
-
   // Handle a notification on background
   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
 
@@ -185,27 +174,6 @@ void main() async {
     handleMessageOpenApp(value, isForeground: true);
   });
 
-  if (kDebugMode) {
-    //======== Crashlytics ========
-    // Force disable Crashlytics collection while doing every day development.
-    // Temporarily toggle this to true if you want to test crash reporting in your app.
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-
-    // Pass all uncaught "fatal" errors from the framework to Crashlytics
-    FlutterError.onError = (error) {
-      FirebaseCrashlytics.instance.recordFlutterError(error);
-      log("An error uncaught fatal error sent to crashlytic");
-    };
-
-    // Pass all uncaught asynchronous errors
-    // that aren't handled by the Flutter framework to Crashlytics.
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      log("An error was sent to crashlytic");
-      return true;
-    };
-  }
-
   runApp(const MyApp());
 }
 
@@ -214,7 +182,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isLogged = FirebaseAuth.instance.currentUser != null;
     return MaterialApp(
       title: 'Firebase pratice',
       debugShowCheckedModeBanner: false,
@@ -230,33 +197,9 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      initialRoute: isLogged ? "/home" : "/login",
+      initialRoute: RouteName.init,
       navigatorKey: navigatorKey,
-      onGenerateRoute: (settings) {
-        return CupertinoPageRoute(
-          builder: (context) {
-            switch (settings.name) {
-              case "/home":
-                return const HomeScreen();
-              case "/chat":
-                return ChatScreen(
-                    message: (settings.arguments) as RemoteMessage);
-              case "/crash":
-                return const CrashlyticScreen();
-              case "/login":
-                return const LoginScreen();
-              case "/account":
-                return const AccountScreen();
-              case "/otp":
-                return const OTPScreen();
-              case "/forgotPass":
-                return const ForgotPassScreen();
-              default:
-                return const LoginScreen();
-            }
-          },
-        );
-      },
+      onGenerateRoute: RouteController().pageRoute,
     );
   }
 }

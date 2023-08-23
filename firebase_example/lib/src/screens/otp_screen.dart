@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_example/src/constant/route_name.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/otp_input_field.dart';
@@ -67,11 +68,7 @@ class _OTPScreenState extends State<OTPScreen> {
         await _authInstance.signInWithCredential(credential).then((value) {
           if (value.user != null) {
             log("Done !!");
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              "/home",
-              (route) => false,
-            );
+            _moveToHome();
           } else {
             log("Failed !!");
           }
@@ -85,6 +82,14 @@ class _OTPScreenState extends State<OTPScreen> {
     );
   }
 
+  void _moveToHome() {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      RouteName.home,
+      (route) => false,
+    );
+  }
+
   void sendCode() async {
     try {
       code = c1.text + c2.text + c3.text + c4.text + c5.text + c6.text;
@@ -94,11 +99,7 @@ class _OTPScreenState extends State<OTPScreen> {
       );
       await _authInstance.signInWithCredential(credential).then((value) {
         if (value.user != null) {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            "/home",
-            (route) => false,
-          );
+          _moveToHome();
         }
       });
     } catch (e) {

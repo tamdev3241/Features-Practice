@@ -1,22 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_example/src/constant/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../constant/assets_manager.dart';
 
-class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  State<AccountScreen> createState() => _AccountScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   User? user;
 
   void signOut() async {
     await FirebaseAuth.instance.signOut().whenComplete(() {
-      Navigator.pushNamedAndRemoveUntil(context, "login", (route) => false);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        RouteName.login,
+        (route) => false,
+      );
     });
   }
 
