@@ -51,7 +51,6 @@ class _OTPScreenState extends State<OTPScreen> {
       codeSent: (String verificationId, int? resendToken) {
         verifyId = verificationId;
         otpVisible = true;
-        setState(() {});
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
       verificationCompleted: (PhoneAuthCredential credential) async {
@@ -68,6 +67,11 @@ class _OTPScreenState extends State<OTPScreen> {
         await _authInstance.signInWithCredential(credential).then((value) {
           if (value.user != null) {
             log("Done !!");
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              "/home",
+              (route) => false,
+            );
           } else {
             log("Failed !!");
           }
