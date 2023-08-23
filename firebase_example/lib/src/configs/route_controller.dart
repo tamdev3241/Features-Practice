@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_example/src/screens/account_screen.dart';
+import 'package:firebase_example/src/screens/forgot_pass_screen.dart';
+import 'package:firebase_example/src/screens/profile_screen.dart';
 import 'package:firebase_example/src/screens/login_screen.dart';
 import 'package:firebase_example/src/screens/otp_screen.dart';
 import 'package:firebase_example/src/screens/scrashlytics_screen.dart';
@@ -25,6 +26,8 @@ class RouteController {
           );
         case RouteName.crash:
           return const CrashlyticScreen();
+        case RouteName.forgotPass:
+          return const ForgotPassScreen();
         case RouteName.profile:
           return const ProfileScreen();
         case RouteName.otp:
