@@ -145,4 +145,23 @@ class AuthServiceImpl extends AuthService {
       throw Exception(e.toString());
     }
   }
+
+  @override
+  Future<User?> signInAsGuess() async {
+    User? user;
+    try {
+      var credential = await _authInstance.signInAnonymously();
+      if (credential.user != null) {
+        user = credential.user!;
+      } else {
+        throw Exception("Occured an error: User has not present !");
+      }
+
+      return user;
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      throw Exception("Occured an error when sign in by Email!");
+    }
+  }
 }

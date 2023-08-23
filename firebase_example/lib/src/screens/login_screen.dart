@@ -53,13 +53,15 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void loginByGoogle() async {
+  void loginAsGuess() async {
     try {
-      var user = await authService.signInWithSocial(SignInSocialType.google);
+      var user = await authService.signInAsGuess();
+
       if (user != null && context.mounted) {
-        Navigator.push(
+        Navigator.pushNamedAndRemoveUntil(
           context,
-          CupertinoPageRoute(builder: (context) => const HomeScreen()),
+          "/home",
+          (route) => false,
         );
       }
     } catch (e) {
@@ -69,9 +71,19 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void loginByFacebook() async {
+  void loginBySocial(SignInSocialType type) async {
+    User? user;
     try {
-      var user = await authService.signInWithSocial(SignInSocialType.facebook);
+      switch (type) {
+        case SignInSocialType.facebook:
+          user = await authService.signInWithSocial(SignInSocialType.facebook);
+          break;
+        case SignInSocialType.google:
+          user = await authService.signInWithSocial(SignInSocialType.google);
+          break;
+        default:
+          throw Exception("Not found social type: $type");
+      }
       if (user != null && context.mounted) {
         Navigator.push(
           context,
@@ -164,11 +176,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  loginByEmail(emailController.text, passwordController.text);
-                },
-                child: const Text("Login"),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        loginByEmail(
+                            emailController.text, passwordController.text);
+                      },
+                      child: const Text("Login"),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: loginAsGuess,
+                      child: const Text("Login as Guess"),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               ElevatedButton(
@@ -192,14 +221,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   InkWell(
-                    onTap: loginByGoogle,
+                    onTap: () {
+                      loginBySocial(SignInSocialType.google);
+                    },
                     child: SvgPicture.asset(
                       AssetsManager.google,
                       height: 30,
                     ),
                   ),
                   InkWell(
-                    onTap: loginByFacebook,
+                    onTap: () {
+                      loginBySocial(SignInSocialType.facebook);
+                    },
                     child: SvgPicture.asset(
                       AssetsManager.facebook,
                       height: 30,
