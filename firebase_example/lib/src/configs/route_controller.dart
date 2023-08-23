@@ -1,15 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_example/src/screens/forgot_pass_screen.dart';
-import 'package:firebase_example/src/screens/profile_screen.dart';
-import 'package:firebase_example/src/screens/login_screen.dart';
-import 'package:firebase_example/src/screens/otp_screen.dart';
-import 'package:firebase_example/src/screens/scrashlytics_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../constant/route_name.dart';
-import '../screens/msg_screen.dart';
+import '../screens/forgot_pass_screen.dart';
 import '../screens/home_screen.dart';
+import '../screens/login_screen.dart';
+import '../screens/msg_screen.dart';
+import '../screens/otp_screen.dart';
+import '../screens/profile_screen.dart';
+import '../screens/scrashlytics_screen.dart';
 
 class RouteController {
   CupertinoPageRoute pageRoute(RouteSettings settings) {
