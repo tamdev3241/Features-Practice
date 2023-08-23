@@ -1,8 +1,6 @@
 import 'dart:developer';
-import 'dart:isolate';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -41,8 +39,10 @@ class AuthServiceImpl extends AuthService {
       }
       return user;
     } on FirebaseAuthException catch (e) {
+      log(e.toString());
       throw Exception(e.message);
     } catch (e) {
+      log(e.toString());
       throw Exception("Occured an error: ${e.toString()}");
     }
   }
@@ -106,8 +106,23 @@ class AuthServiceImpl extends AuthService {
   }
 
   Future<OAuthCredential> _signInWithFacebook() async {
-    // Trigger the sing-in flow
-    final LoginResult loginResult = await FacebookAuth.instance.login();
+    final LoginResult loginResult = await FacebookAuth.instance.login(
+      permissions: ['public_profile'],
+    );
+
+    switch (loginResult.status) {
+      case LoginStatus.success:
+        log("Login with facebook successfully:");
+        log("Token: ${loginResult.accessToken!.token}");
+        break;
+      case LoginStatus.cancelled:
+        log("Login with facebook was cancelled");
+        break;
+      case LoginStatus.failed:
+        log("Login with facebook was failed");
+        break;
+      default:
+    }
 
     // Create a credential from the access token
     final facebookAuthCredential =
