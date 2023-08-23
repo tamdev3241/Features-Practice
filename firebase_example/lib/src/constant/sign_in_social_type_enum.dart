@@ -1,0 +1,1 @@
+enum SignInSocialType { google, facebook }
