@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite_example/src/models/classroom.dart';
-import 'package:sqflite_example/src/widgets/create_class_form.dart';
 
+import '../models/classroom.dart';
 import '../widgets/class_item.dart';
+import '../widgets/class_form.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,19 +27,40 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  _showAddClassroomDialog() {
+  void _showAddClassroomDialog() {
     showDialog(
-        context: context,
-        builder: (_) {
-          return CreateClassForm(
-            onSubmit: (className) async {
-              await classDb.add(name: className);
-              _fetchClassrooms();
-              if (!mounted) return;
-              Navigator.pop(context);
-            },
-          );
-        });
+      context: context,
+      builder: (_) {
+        return ClassForm(
+          onSubmit: (className) async {
+            await classDb.insert(name: className);
+            _fetchClassrooms();
+            if (!mounted) return;
+            Navigator.pop(context);
+          },
+        );
+      },
+    );
+  }
+
+  void _showInfoClassroomDialog(Classroom classroom) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return ClassForm(
+          classroom: classroom,
+          onSubmit: (className) async {
+            await classDb.updated(
+              id: classroom.id,
+              name: className,
+            );
+            _fetchClassrooms();
+            if (!mounted) return;
+            Navigator.pop(context);
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -81,7 +102,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           await classDb.delete(classrooms[index].id);
                           _fetchClassrooms();
                         },
-                        onTap: () {},
+                        onTap: () {
+                          _showInfoClassroomDialog(classrooms[index]);
+                        },
                       );
                     },
                   );

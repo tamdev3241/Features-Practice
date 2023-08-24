@@ -1,7 +1,7 @@
-import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart';
-import 'package:sqflite_example/src/models/classroom.dart';
+import 'package:sqflite/sqflite.dart';
+
+import '../models/classroom.dart';
 
 class DbManager {
   Database? _database;

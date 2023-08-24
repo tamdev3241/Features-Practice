@@ -35,7 +35,7 @@ class ClassItem extends StatelessWidget {
           ),
         ),
         subtitle: Text(subTitle),
-        tileColor: Colors.orange[100],
+        tileColor: Colors.blueGrey[100],
         trailing: IconButton(
           onPressed: onDelete,
           icon: const Icon(

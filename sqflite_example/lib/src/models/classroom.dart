@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_example/src/services/db_manager.dart';
+
+import '../services/db_manager.dart';
 
 class Classroom {
   final int id;
@@ -48,7 +49,7 @@ class ClassroomDb {
     );""");
   }
 
-  Future<int> add({required String name}) async {
+  Future<int> insert({required String name}) async {
     final db = await DbManager().database;
     return await db.rawInsert(
       '''INSERT INTO $tableName (name, createdDt) VALUES (?, ?)''',
@@ -59,7 +60,7 @@ class ClassroomDb {
   Future<List<Classroom>> fetchAll() async {
     final db = await DbManager().database;
     final classrooms =
-        await db.rawQuery('''SELECT * FROM $tableName ORDER BY createdDt''');
+        await db.rawQuery('''SELECT * FROM $tableName ORDER BY createdDt ''');
     return classrooms.map((e) => Classroom.fromSqlDatabase(e)).toList();
   }
 
@@ -72,13 +73,32 @@ class ClassroomDb {
     return Classroom.fromSqlDatabase(classrooms.first);
   }
 
+  Future<List<Classroom>> fetchByLimit(int limit) async {
+    final db = await DbManager().database;
+
+    final classrooms = await db.query(
+      tableName,
+      limit: limit,
+    );
+
+    return classrooms.map((e) => Classroom.fromSqlDatabase(e)).toList();
+  }
+
   Future<int> updated({required int id, String? name}) async {
     final db = await DbManager().database;
+
+    // use query
+    // return await db.rawUpdate(
+    //   'UPDATE $tableName SET name = ? WHERE id = ?',
+    //   [name, id],
+    // );
+
+    // use function
     return await db.update(
       tableName,
       {
         if (name != null) 'name': name,
-        'updatedDt': DateTime.now().microsecondsSinceEpoch,
+        'createdDt': DateTime.now().microsecondsSinceEpoch,
       },
       where: 'id=?',
       conflictAlgorithm: ConflictAlgorithm.rollback,
@@ -86,11 +106,19 @@ class ClassroomDb {
     );
   }
 
-  Future<void> delete(int id) async {
+  Future<int> delete(int id) async {
     final db = await DbManager().database;
-    await db.rawDelete(
-      '''DELETE FROM $tableName WHERE id = ?''',
-      [id],
+    // use query
+    // await db.rawDelete(
+    //   '''DELETE FROM $tableName WHERE id = ?''',
+    //   [id],
+    // );
+
+    // Use fucntion
+    return await db.delete(
+      tableName,
+      where: "id=?",
+      whereArgs: [id],
     );
   }
 }

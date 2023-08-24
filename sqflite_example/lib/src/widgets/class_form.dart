@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../models/classroom.dart';
 
-class CreateClassForm extends StatefulWidget {
+class ClassForm extends StatefulWidget {
   final Classroom? classroom;
   final ValueChanged<String> onSubmit;
-  const CreateClassForm({
+  const ClassForm({
     super.key,
     required this.onSubmit,
     this.classroom,
   });
 
   @override
-  State<CreateClassForm> createState() => _CreateClassFormState();
+  State<ClassForm> createState() => _ClassFormState();
 }
 
-class _CreateClassFormState extends State<CreateClassForm> {
+class _ClassFormState extends State<ClassForm> {
   final controller = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
