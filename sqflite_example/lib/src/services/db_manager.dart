@@ -11,7 +11,7 @@ class DbManager {
     var database = await openDatabase(
       path,
       version: 1,
-      // onCreate: create,
+      onCreate: create,
       singleInstance: true,
     );
 
@@ -27,11 +27,11 @@ class DbManager {
   }
 
   Future<String> get fullPath async {
-    const name = 'todo.db';
+    const name = 'classroom.db';
     final path = await getDatabasesPath();
     return join(path, name);
   }
 
-  Future<void> cretate(Database database, int version) async =>
+  Future<void> create(Database database, int version) async =>
       await ClassroomDb().createTable(database);
 }

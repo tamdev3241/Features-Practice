@@ -48,39 +48,36 @@ class ClassroomDb {
     );""");
   }
 
-  Future<int> create({required String title}) async {
+  Future<int> add({required String name}) async {
     final db = await DbManager().database;
     return await db.rawInsert(
-      '''INSERT INTO $tableName (title, createdDt) VALUES (?, ?)''',
-      [title, DateTime.now().microsecondsSinceEpoch],
+      '''INSERT INTO $tableName (name, createdDt) VALUES (?, ?)''',
+      [name, DateTime.now().microsecondsSinceEpoch],
     );
   }
 
   Future<List<Classroom>> fetchAll() async {
     final db = await DbManager().database;
-    final classrooms = await db.rawQuery('''SELECT *
-        FORM $tableName
-        ORDER BY createdDt''');
+    final classrooms =
+        await db.rawQuery('''SELECT * FROM $tableName ORDER BY createdDt''');
     return classrooms.map((e) => Classroom.fromSqlDatabase(e)).toList();
   }
 
   Future<Classroom> fetchById(int id) async {
     final db = await DbManager().database;
     final classrooms = await db.rawQuery(
-      '''SELECT *
-        FROM $tableName
-        WHERE "id" = ?''',
+      '''SELECT * FROM $tableName WHERE "id" = ?''',
       [id],
     );
     return Classroom.fromSqlDatabase(classrooms.first);
   }
 
-  Future<int> updated({required int id, String? title}) async {
+  Future<int> updated({required int id, String? name}) async {
     final db = await DbManager().database;
     return await db.update(
       tableName,
       {
-        if (title != null) 'title': title,
+        if (name != null) 'name': name,
         'updatedDt': DateTime.now().microsecondsSinceEpoch,
       },
       where: 'id=?',
@@ -92,7 +89,7 @@ class ClassroomDb {
   Future<void> delete(int id) async {
     final db = await DbManager().database;
     await db.rawDelete(
-      '''DELETE FORM $tableName WHERE id = ?''',
+      '''DELETE FROM $tableName WHERE id = ?''',
       [id],
     );
   }
