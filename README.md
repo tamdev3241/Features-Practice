@@ -1,2 +1,6 @@
 # Features-Practice
-A repo consists of many projects that to practice feature in Flutter. Such as working with Firebase, practice widgets, networking, database, ...
+A repo consists of many small projects that practice features in Flutter. Includes: 
+ - Firebase: Authentication (Phone, other social networks), reset the password, firebase cloud message, crashlytics.
+ - Persis data:
+     + Sqflite
+
