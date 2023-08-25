@@ -18,7 +18,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchClassrooms();
+    if (mounted) {
+      _fetchClassrooms();
+    }
   }
 
   void _fetchClassrooms() async {
@@ -66,18 +68,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Classes List"),
-      ),
+      // appBar: AppBar(
+      //   centerTitle: true,
+      //   title: const Text("Classes List"),
+      // ),
       body: FutureBuilder<List<Classroom>>(
         future: futureClassroom,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasData) {
+          if (snapshot.hasData) {
             final classrooms = snapshot.data!;
 
             return classrooms.isEmpty
@@ -109,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   );
           }
-          return const SizedBox();
+          return const Center(child: CircularProgressIndicator());
         },
       ),
       floatingActionButton: FloatingActionButton(
