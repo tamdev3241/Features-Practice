@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:hive_example/src/models/todo.dart';
+import 'package:hive_example/src/repositories/hive_repositpry.dart';
+import '../models/todo.dart';
 
 import '../constant/string_constant.dart';
 import '../widgets/todo_form.dart';
@@ -27,10 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void getTodos() async {
     todolist.clear();
-    for (var key in todoBox.keys) {
-      var todo = await todoBox.get(key);
-      todolist.add(todo);
-    }
+    todolist = HiveRepository(StringConfig.todoBox).getAll();
   }
 
   void onSelect({Todo? todo}) {
