@@ -1,9 +1,12 @@
 import 'package:hive/hive.dart';
 
+import '../constant/string_constant.dart';
+import 'local_entity.dart';
+
 part 'todo.g.dart';
 
 @HiveType(typeId: 1)
-class Todo {
+class Todo extends LocalEntity {
   @HiveField(0)
   final int id;
 
@@ -26,4 +29,10 @@ class Todo {
     required this.content,
     this.isComplete = false,
   });
+
+  @override
+  String get tableName => StringConfig.todoBox;
+
+  @override
+  String get key => id.toString();
 }

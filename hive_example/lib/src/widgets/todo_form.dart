@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_example/src/constant/string_constant.dart';
+import 'package:hive_example/src/repositories/hive_repositpry.dart';
 import 'package:intl/intl.dart';
 
 import '../models/todo.dart';
@@ -43,7 +44,7 @@ class _TodoFormState extends State<TodoForm> {
       if (isEditting) {
         await todoBox.putAt(todo.id - 1, todo);
       }
-      await todoBox.put(todo.id, todo);
+      await HiveRepository(StringConfig.todoBox).createOrUpdate(todo);
     }).whenComplete(() {
       if (mounted) {
         Navigator.pop(context);
